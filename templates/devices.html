@@ -1,0 +1,24 @@
+<!-- templates/devices.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Device List</title>
+</head>
+<body>
+    <h1>Registered Devices</h1>
+    <ul>
+        {% for device in devices %}
+        <li>
+            Device ID: {{ device.device_id }}, Device Name: {{ device.device_name }}
+            <!-- Form to remove a device -->
+            <form action="/devices" method="post" style="display: inline;">
+                <input type="hidden" name="device_id" value="{{ device.device_id }}">
+                <input type="submit" value="Remove">
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

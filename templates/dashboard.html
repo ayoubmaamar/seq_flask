@@ -1,0 +1,24 @@
+<!-- templates/dashboard.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <script type="text/javascript">
+        var socket = io();
+        socket.on('mqtt_message', function(data) {
+            // Append received message to the messages div
+            var messagesDiv = document.getElementById('messages');
+            var messagePara = document.createElement("p");
+            messagePara.textContent = `Topic: ${data.topic}, Message: ${data.payload}`;
+            messagesDiv.appendChild(messagePara);
+        });
+    </script>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <div id="messages"></div>
+</body>
+</html>

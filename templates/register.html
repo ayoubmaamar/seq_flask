@@ -1,0 +1,20 @@
+<!-- templates/register.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Device</title>
+</head>
+<body>
+    <h1>Register a New Device</h1>
+    <form action="/register" method="post">
+        <label for="device_id">Device ID:</label>
+        <input type="text" id="device_id" name="device_id"><br><br>
+        <label for="device_name">Device Name:</label>
+        <input type="text" id="device_name" name="device_name"><br><br>
+        <input type="submit" value="Register">
+    </form>
+</body>
+</html>
