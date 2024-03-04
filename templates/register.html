@@ -16,5 +16,14 @@
         <input type="text" id="device_name" name="device_name"><br><br>
         <input type="submit" value="Register">
     </form>
+    <script type="text/javascript">
+        socket.on('new_device', function(data) {
+        var deviceList = document.getElementById('device-list');
+        var newDevice = document.createElement('li');
+        newDevice.textContent = `Device ID: ${data.device_id}, Name: ${data.device_name}`;
+        deviceList.appendChild(newDevice);
+});
+
+    </script>
 </body>
 </html>

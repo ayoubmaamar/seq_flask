@@ -12,7 +12,7 @@
             // Append received message to the messages div
             var messagesDiv = document.getElementById('messages');
             var messagePara = document.createElement("p");
-            messagePara.textContent = `Topic: ${data.topic}, Message: ${data.payload}`;
+            messagePara.textContent = `Topic: ${data.topic}, Message: ${data.payload};
             messagesDiv.appendChild(messagePara);
         });
     </script>

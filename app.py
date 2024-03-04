@@ -26,17 +26,24 @@ mqtt_user = "brickgrabber135"
 mqtt_client = mqtt_client.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2, client_id=mqtt_client_name)
 mqtt_client.username_pw_set(username=mqtt_user, password='1234')  # Add password if necessary
 
-def on_connect(client, userdata, flags, rc, dummy):
+def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("connected OK Returned code=", rc)
-        client.subscribe("hola")
-        client.subscribe("handshake_response")
+        print("Connected OK Returned code=", rc)
+        client.subscribe("device/registration")
     else:
         print("Bad connection Returned code=", rc)
 
 def on_message(client, userdata, msg):
-    print(f"Received message '{msg.payload.decode()}' on topic '{msg.topic}'")
-    socketio.emit('mqtt_message', {'topic': msg.topic, 'payload': msg.payload.decode()})
+    if msg.topic == "device/registration":
+        # Extract device information from the message
+        # Assuming the message payload is 'device_id,device_name'
+        device_info = msg.payload.decode().split(',')
+        device_id = device_info[0]
+        device_name = device_info[1] if len(device_info) > 1 else "Unknown"
+
+        # Insert the new device into the MongoDB collection
+        devices_collection.insert_one({'device_id': device_id, 'device_name': device_name})
+        print(f"Registered new device: {device_id} - {device_name}")
 
 mqtt_client.on_connect = on_connect
 mqtt_client.on_message = on_message
@@ -51,6 +58,8 @@ def test_connect():
 @socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected')
+
+
 
 # MongoDB Atlas setup
 uri = "mongodb+srv://seq_user:lkwnbnZBc5EH0You@cluster0.fj9cwqh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
