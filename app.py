@@ -5,8 +5,6 @@ from flask_socketio import SocketIO
 
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
-import json
-import sys
 from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.primitives.serialization import ParameterFormat
 from cryptography.hazmat.primitives.serialization import Encoding
