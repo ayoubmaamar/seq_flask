@@ -1,0 +1,79 @@
+import paho.mqtt.client as mqtt
+import subscriber as ss
+import paho.mqtt.publish as publish
+
+import time
+
+
+mqtt_hostname = "brickgrabber135.cloud.shiftr.io"
+mqtt_port = 1883
+mqtt_user = "brickgrabber135"
+
+# The callback for when the client receives a CONNACK response from the server.
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        client.connected_flag = True  # set flag
+        print("connected OK Returned code=", rc)
+    else:
+        print("Bad connection Returned code=", rc)
+
+    # Subscribing in on_connect() means that if we lose the connection and
+    # reconnect then subscriptions will be renewed.
+    client.subscribe("hola")
+
+# The callback for when a PUBLISH message is received from the server.
+def on_message(client, userdata, msg):
+    print(msg.topic+": "+msg.payload.decode('utf-8'))
+
+
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+client.on_connect = on_connect
+client.on_message = on_message
+
+
+client.username_pw_set("public","public")
+
+# flag = False
+# while not flag:
+pwd = input("Type your password: ")
+client.username_pw_set(mqtt_user, pwd)
+client.connect(mqtt_hostname, mqtt_port, 60)
+
+
+client.loop_start()
+
+# client.connect("brickgrabber135.cloud.shiftr.io", 1883, 60)
+# client.subscribe("paho/test/topic")
+
+# # Si quiero que este escuchando para siempre:
+# # client.loop_forever()
+# # http://www.steves-internet-guide.com/loop-python-mqtt-client/
+
+# # Inicia una nueva hebra
+
+# mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+# mqttc.on_connect = ss.on_connect
+# mqttc.on_message = ss.on_message
+# mqttc.on_subscribe = ss.on_subscribe
+# mqttc.on_unsubscribe = ss.on_unsubscribe
+
+# # Our application produce some messages
+# msg_info = mqttc.publish("paho/test/topic", "my message", qos=1)
+# unacked_publish.add(msg_info.mid)
+
+# mqttc.user_data_set([])
+# mqttc.connect("mqtt.eclipseprojects.io")
+# mqttc.subscribe("paho/test/topic")
+
+# client.loop_start()
+# message = "It works!!"
+# publish.single("paho/topic/test", message, hostname='localhost')
+
+# while 1:
+#     # Publish a message every second
+#     publish.single("paho/topic/test", message, hostname='localhost')
+#     time.sleep(1)
+
+# # También se puede conectar y enviar en una linea https://www.eclipse.org/paho/clients/python/docs/#single
+
+# # Y conectar y bloquear para leer una sola vez en una sola linea https://www.eclipse.org/paho/clients/python/docs/#simple

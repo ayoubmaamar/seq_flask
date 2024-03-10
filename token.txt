@@ -1,0 +1,3 @@
+nbMzaeKJ5LaEItEJ
+
+mqtt://brickgrabber135:nbMzaeKJ5LaEItEJ@brickgrabber135.cloud.shiftr.io
