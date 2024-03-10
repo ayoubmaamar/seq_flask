@@ -1,24 +1,37 @@
-<!-- templates/dashboard.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
-    <script type="text/javascript">
-        var socket = io();
-        socket.on('mqtt_message', function(data) {
-            // Append received message to the messages div
-            var messagesDiv = document.getElementById('messages');
-            var messagePara = document.createElement("p");
-            messagePara.textContent = `Topic: ${data.topic}, Message: ${data.payload}`;
-            messagesDiv.appendChild(messagePara);
-        });
-    </script>
+    <style>
+        #devices {
+            margin-top: 20px;
+        }
+        .device {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Dashboard</h1>
-    <div id="messages"></div>
+    <h1>IoT Platform Dashboard</h1>
+    <div id="devices">
+        <h2>Device Temperatures</h2>
+    </div>
+    
+    <script type="text/javascript">
+        var socket = io();
+        socket.on('temperature_update', function(data) {
+            var devicesDiv = document.getElementById('devices');
+            var deviceDiv = document.createElement("div");
+            deviceDiv.classList.add("device");
+            deviceDiv.textContent = `Device ID: ${data.device_id}, Temperature: ${data.temperature_value}`;
+            devicesDiv.appendChild(deviceDiv);
+        });
+    </script>
 </body>
 </html>
