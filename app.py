@@ -16,9 +16,9 @@ devices_collection = db["Devices_Collection"]
 topics_collection = db["Topics_Collection"]
 
 # MQTT setup
-mqtt_broker = "oasishunter254.cloud.shiftr.io"
+mqtt_hostname = "chainhare753.cloud.shiftr.io"
 mqtt_port = 1883
-mqtt_user = "oasishunter254"  # Replace with your MQTT broker's username
+mqtt_user = "chainhare753"
 mqtt_password = "1234"  # Replace with your MQTT broker's password
 
 def listen_for_device_info():
@@ -63,6 +63,14 @@ def devices():
 def remove_device(device_id):
     devices_collection.delete_one({'device_id': device_id})
     return redirect(url_for('devices'))
+
+
+@app.route('/messages')
+def messages():
+    current_time = datetime.now()
+    messages = db["Message_Data"].find({}, {'_id': 0, 'device_id': 1, 'timestamp': 1, 'data': 1}).sort("timestamp", -1).limit(50)  # Fetch the latest 50 messages
+    return render_template('messages.html', messages=messages)
+
 
 from datetime import datetime, timedelta
 

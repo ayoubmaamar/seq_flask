@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Message Data</title>
+</head>
+<body>
+    <h1>Message Data</h1>
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>
+                Device ID: {{ message.device_id }} <br>
+                Timestamp: {{ message.timestamp }} <br>
+                Data: {{ message.data }}
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No messages found.</p>
+    {% endif %}
+    <a href="/">Back to Home</a>
+</body>
+</html>

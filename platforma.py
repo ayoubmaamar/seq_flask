@@ -18,11 +18,13 @@ topics_collection = db["Topics_Collection"]
 # MQTT and Cryptography setup
 BYTE_SEPARATOR = b'\\|'
 PASSWORD = '1234'
+
 active_devices = {}
+
 mqtt_client_name = "platform"
 mqtt_hostname = "chainhare753.cloud.shiftr.io"
 mqtt_port = 1883
-mqtt_user = "Chainhare753"
+mqtt_user = "chainhare753"
 
 # Callback for when the client receives a CONNACK response from the server
 def on_connect(client, userdata, flags, rc, dummy):

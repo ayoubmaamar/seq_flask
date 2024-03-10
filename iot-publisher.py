@@ -18,13 +18,13 @@ mongo_client = MongoClient(uri)
 db = mongo_client["SEQ_DB"]
 devices_collection = db["Devices_Collection"]
 
-# MQTT and Cryptography setup
+# BYTE_SEPARATOR = b'\xff'
 BYTE_SEPARATOR = b'\\|'
 PASSWORD = '1234'
 mqtt_client_name = "Martin"
-mqtt_hostname = "oasishunter254.cloud.shiftr.io"
+mqtt_hostname = "chainhare753.cloud.shiftr.io"
 mqtt_port = 1883
-mqtt_user = "oasishunter254"
+mqtt_user = "chainhare753"
 b_shared_key = ''
 iv = os.urandom(16)
 

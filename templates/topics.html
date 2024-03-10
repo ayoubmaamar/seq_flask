@@ -2,13 +2,15 @@
 <html>
 <head>
     <title>Topics</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script type="text/javascript" charset="utf-8">
         var socket = io();
-        socket.on('new_data', function(data) {
+        socket.on('device_update', function(data) {
             // Append new data to the list
+            var ul = document.querySelector("#messageList");
             var li = document.createElement("li");
             li.textContent = "Device ID: " + data.device_id + ", Data: " + data.data + ", Timestamp: " + data.timestamp;
-            document.querySelector("ul").appendChild(li);
+            ul.appendChild(li);
         });
     </script>
 </head>
@@ -23,8 +25,8 @@
         <button type="submit">Select Topic</button>
     </form>
 
-    {% if messages %}
-    <ul>
+    
+    <ul id="messageList">
         {% for message in messages %}
             <li>
                 Device ID: {{ message.device_id }} <br>
@@ -33,7 +35,7 @@
             </li>
         {% endfor %}
     </ul>
-    {% endif %}
+    
     <a href="/">Back to Home</a>
 </body>
 </html>
