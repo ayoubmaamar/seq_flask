@@ -1,24 +1,42 @@
-<!-- templates/devices.html -->
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Device List</title>
+    <title>Devices</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <script type="text/javascript">
+        var socket = io();
+        socket.on('device_update', function(data) {
+            var deviceList = document.getElementById('deviceList');
+            var existingDevice = document.getElementById(data.device_id);
+            if (existingDevice) {
+                // Update existing device info
+                existingDevice.innerHTML = 'Device ID: ' + data.device_id + '<br>Status: ' + data.status + '<br>Additional Info: ' + (data.additional_info || 'No additional info available') + '<br>';
+            } else {
+                // Add new device
+                var newDevice = document.createElement('li');
+                newDevice.id = data.device_id;
+                newDevice.innerHTML = 'Device ID: ' + data.device_id + '<br>Status: ' + data.status + '<br>Additional Info: ' + (data.additional_info || 'No additional info available') + '<br><a href="/remove_device/' + data.device_id + '">Remove</a>';
+                deviceList.appendChild(newDevice);
+            }
+        });
+    </script>
 </head>
 <body>
-    <h1>Registered Devices</h1>
-    <ul>
+    <h1>Devices</h1>
+    <form method="POST">
+        <input type="text" name="device_id" placeholder="Device ID">
+        <button type="submit">Add Device</button>
+    </form>
+    <ul id="deviceList">
         {% for device in devices %}
-        <li>
-            Device ID: {{ device.device_id }}, Device Name: {{ device.device_name }}
-            <!-- Form to remove a device -->
-            <form action="/devices" method="post" style="display: inline;">
-                <input type="hidden" name="device_id" value="{{ device.device_id }}">
-                <input type="submit" value="Remove">
-            </form>
+        <li id="{{ device.device_id }}">
+            Device ID: {{ device.device_id }} <br>
+            Status: {{ device.status }} <br>
+            Additional Info: {{ device.additional_info | default('No additional info available') }} <br>
+            <a href="/remove_device/{{ device.device_id }}">Remove</a>
         </li>
         {% endfor %}
     </ul>
+    <a href="/">Back to Home</a>
 </body>
 </html>

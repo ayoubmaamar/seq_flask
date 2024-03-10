@@ -1,19 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Device Dashboard</title>
+    <title>IoT Platform</title>
 </head>
 <body>
-    <h1>Registered Devices</h1>
-    <ul>
-        {% for device_id, device_info in devices.items() %}
-            <li>
-                <strong>Device ID:</strong> {{ device_id }}<br>
-                <strong>Data:</strong> {{ device_info['data'] | join(', ') }}
-            </li>
-        {% endfor %}
-    </ul>
+    <h1>Welcome to the IoT Platform</h1>
+    <a href="/devices">Manage Devices</a>
+    <a href="/topics">Manage Topics</a>
 </body>
 </html>

@@ -1,18 +1,39 @@
-<!-- templates/topics.html -->
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Topics</title>
+    <title>Topics</title>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io();
+        socket.on('new_data', function(data) {
+            // Append new data to the list
+            var li = document.createElement("li");
+            li.textContent = "Device ID: " + data.device_id + ", Data: " + data.data + ", Timestamp: " + data.timestamp;
+            document.querySelector("ul").appendChild(li);
+        });
+    </script>
 </head>
 <body>
-    <h1>Select Topics</h1>
-    <form action="/topics" method="post">
-        <label for="topic">Topic:</label>
-        <input type="text" id="topic" name="topic"><br><br>
-        <input type="submit" value="Subscribe">
+    <h1>Topics</h1>
+    <form method="POST">
+        <select name="selected_topic">
+            {% for topic in topics %}
+                <option value="{{ topic.topic_name }}" {% if selected_topic == topic.topic_name %}selected{% endif %}>{{ topic.topic_name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Select Topic</button>
     </form>
+
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>
+                Device ID: {{ message.device_id }} <br>
+                Timestamp: {{ message.timestamp }} <br>
+                Data: {{ message.data }} <!-- Handle binary data appropriately -->
+            </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <a href="/">Back to Home</a>
 </body>
 </html>

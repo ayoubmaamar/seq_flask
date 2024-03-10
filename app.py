@@ -1,56 +1,95 @@
-from flask import Flask, render_template, request, jsonify
-import paho.mqtt.client as mqtt
-import os
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from flask import Flask, render_template, request, redirect, url_for
+from pymongo import MongoClient
+from paho.mqtt import client as mqtt_client
+from flask_socketio import SocketIO
+import threading
+import json
 
-# Flask app initialization
 app = Flask(__name__)
+socketio = SocketIO(app)
 
-# MQTT settings
-MQTT_BROKER_URL = "oasishunter254.cloud.shiftr.io"
-MQTT_BROKER_PORT = 1883
-MQTT_USERNAME = "oasishunter254"
-MQTT_PASSWORD = "1234"  # Assuming this is the password you want to use for MQTT
-MQTT_KEEPALIVE = 60
-MQTT_TOPIC = "temperature-data"  # Define the topic you want to listen to
+# MongoDB connection setup
+uri = "mongodb+srv://seq_user:lkwnbnZBc5EH0You@cluster0.fj9cwqh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"  # Replace this with your actual MongoDB URI
+mongo_client = MongoClient(uri)
+db = mongo_client["SEQ_DB"]
+devices_collection = db["Devices_Collection"]
+topics_collection = db["Topics_Collection"]
 
-# Device registry
-devices = {}
+# MQTT setup
+mqtt_broker = "oasishunter254.cloud.shiftr.io"
+mqtt_port = 1883
+mqtt_user = "oasishunter254"  # Replace with your MQTT broker's username
+mqtt_password = "1234"  # Replace with your MQTT broker's password
 
-# MQTT client initialization
-mqtt_client = mqtt.Client("Martin")
+def listen_for_device_info():
+    def on_connect(client, userdata, flags, rc):
+        client.subscribe("device_info_topic")
 
-# Initialize encryption settings
-BYTE_SEPARATOR = b'\\|'
-iv = os.urandom(16)
-mode_CBC = modes.CBC(iv)  # CBC mode initialization with the IV
+    def on_message(client, userdata, message):
+        data = json.loads(message.payload.decode())
+        device_info = {
+            "device_id": data['device_id'],
+            "additional_info": data.get('additional_info', 'No additional info')
+        }
+        devices_collection.update_one({"device_id": device_info["device_id"]}, {"$set": device_info}, upsert=True)
+        socketio.emit('device_update', device_info)
 
-# MQTT Callbacks
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code " + str(rc))
-    client.subscribe(MQTT_TOPIC)
+    client = mqtt_client.Client()
+    client.username_pw_set(username=mqtt_user, password=mqtt_password)
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.connect(mqtt_broker, mqtt_port)
+    client.loop_start()
 
-def on_message(client, userdata, msg):
-    print(f"Message received on topic {msg.topic}: {msg.payload.decode()}")
-    # Device registration logic
-    # Assuming the message payload contains device_id and other details separated by BYTE_SEPARATOR
-    payload_data = msg.payload.split(BYTE_SEPARATOR)
-    device_id = payload_data[0].decode()
-    device_data = payload_data[1:]
-    devices[device_id] = {'data': device_data}
+# Start MQTT listener thread
+thread = threading.Thread(target=listen_for_device_info)
+thread.start()
 
-# MQTT client configuration
-mqtt_client.on_connect = on_connect
-mqtt_client.on_message = on_message
-mqtt_client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
-mqtt_client.connect(MQTT_BROKER_URL, MQTT_BROKER_PORT, MQTT_KEEPALIVE)
-
-# Flask route example
 @app.route('/')
 def index():
-    return render_template('index.html', devices=devices)
+    return render_template('index.html')
 
-# Running the Flask app
+@app.route('/devices', methods=['GET', 'POST'])
+def devices():
+    if request.method == 'POST':
+        device_id = request.form.get('device_id')
+        devices_collection.insert_one({'device_id': device_id, 'status': 'active'})
+        return redirect(url_for('devices'))
+    else:
+        devices = list(devices_collection.find())
+        return render_template('devices.html', devices=devices)
+
+@app.route('/remove_device/<device_id>')
+def remove_device(device_id):
+    devices_collection.delete_one({'device_id': device_id})
+    return redirect(url_for('devices'))
+
+from datetime import datetime, timedelta
+
+@app.route('/topics', methods=['GET', 'POST'])
+def topics():
+    if request.method == 'POST':
+        selected_topic = request.form.get('selected_topic')
+        messages = None
+        num_messages = int(request.form.get('num_messages', 10))  # Default to 10 messages if not specified
+        if selected_topic == 'temperature-data':
+            current_time = datetime.now()
+            messages = db["Message_Data"].find({'timestamp': {'$gt': current_time - timedelta(hours=1)}}, {'_id': 0, 'device_id': 1, 'timestamp': 1, 'data': 1}).limit(num_messages)
+        return render_template('topics.html', topics=list(topics_collection.find()), messages=messages, selected_topic=selected_topic, num_messages=num_messages)
+    else:
+        current_time = datetime.now()
+        messages = db["Message_Data"].find({'timestamp': {'$gt': current_time - timedelta(hours=1)}}, {'_id': 0, 'device_id': 1, 'timestamp': 1, 'data': 1}).limit(10)
+        return render_template('topics.html', topics=list(topics_collection.find()), messages=messages, selected_topic=None, num_messages=10)
+
 if __name__ == '__main__':
-    mqtt_client.loop_start()  # Start the MQTT client loop
-    app.run(debug=True)  # Start the Flask application
+    app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
