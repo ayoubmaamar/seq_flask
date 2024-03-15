@@ -20,7 +20,7 @@ def encrypt(plaintext, key):
     # Encrypt the plaintext and get the authentication tag
     ciphertext = encryptor.update(plaintext) + encryptor.finalize()
     tag = encryptor.tag
-    print(tag)
+    # print(tag)
 
     return (iv, ciphertext, tag)
 

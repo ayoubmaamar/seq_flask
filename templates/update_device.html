@@ -1,0 +1,18 @@
+<!-- templates/update_device.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Device</title>
+</head>
+<body>
+    <h1>Update Device</h1>
+    <form method="post">
+        Device ID: <input type="text" name="device_id" value="{{ device['device_id'] }}"><br>
+        Status: <input type="text" name="status" value="{{ device['status'] }}"><br>
+        Public Key: <textarea name="public_key">{{ device['public_key'] }}</textarea><br>
+        Shared Key: <textarea name="shared_key">{{ device['shared_key'] }}</textarea><br>
+        <input type="submit" value="Update">
+    </form>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device List</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .device-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .device-item {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .device-header {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .device-name {
+            color: #007bff;
+        }
+
+        .details {
+            display: none;
+            padding: 10px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            margin-left: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .add-device-btn {
+            margin-right: 8px;
+        }
+
+        .index-btn {
+            background-color: #6c757d;
+        }
+
+        .index-btn:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Device List</h1>
+        <ul class="device-list">
+            {% for device in devices %}
+                <li class="device-item">
+                    <div class="device-header" onclick="toggleDetails('details-{{ loop.index }}')">
+                        <span class="device-name">{{ device['device_id'] }}</span>
+                    </div>
+                    <div id="details-{{ loop.index }}" class="details">
+                        <p><strong>Status:</strong> {{ device['status'] }}</p>
+                        <p><strong>Public Key:</strong> {{ device['public_key'] }}</p>
+                        <p><strong>Shared Key:</strong> {{ device['shared_key'] }}</p>
+                        <div class="actions">
+                            <form action="{{ url_for('update_device', device_id=device['_id']) }}" method="get">
+                                <button class="btn update-btn">Update</button>
+                            </form>
+                            <form action="{{ url_for('delete_device', device_id=device['_id']) }}" method="post">
+                                <button class="btn delete-btn">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="buttons">
+            <a href="/register" class="btn add-device-btn">Add Device</a>
+            <a href="/" class="btn index-btn">Index</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleDetails(elementId) {
+            var element = document.getElementById(elementId);
+            if (element.style.display === "none") {
+                element.style.display = "block";
+            } else {
+                element.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

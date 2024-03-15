@@ -1,23 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Message Data</title>
+    <meta charset="UTF-8">
+    <title>Messages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .message-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #0056b3;
+        }
+        .message-content {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Message Data</h1>
-    {% if messages %}
+    <h1>Messages</h1>
     <ul>
         {% for message in messages %}
-            <li>
-                Device ID: {{ message.device_id }} <br>
-                Timestamp: {{ message.timestamp }} <br>
-                Data: {{ message.data }}
-            </li>
+        <li>
+            <div class="message-header">Device ID: {{ message.device_id }}</div>
+            <div class="message-content">Encrypted Data: {{ message.encrypted_data }}</div>
+            <div class="message-content">Decrypted Data: {{ message.decrypted_data }}</div>
+            <div class="message-content">IV: {{ message.iv }}</div>
+            <div class="message-content">Tag: {{ message.tag }}</div>
+            <div class="message-content">Ciphertext: {{ message.ciphertext }}</div>
+            <div class="message-content">Decrypted Temp: {{ message.decrypted_temp }}</div>
+            <div class="message-content">Client Name: {{ message.client_name }}</div>
+            <div class="message-content">Timestamp: {{ message.timestamp }}</div>
+            <div class="message-content">Topic: {{ message.topic }}</div>
+        </li>
         {% endfor %}
     </ul>
-    {% else %}
-    <p>No messages found.</p>
-    {% endif %}
-    <a href="/">Back to Home</a>
 </body>
 </html>
